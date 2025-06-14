@@ -11,7 +11,7 @@ export default function Home() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
+  // const featuresRef = useRef<HTMLDivElement>(null);
 
   // GSAP animations
   useEffect(() => {
@@ -19,8 +19,8 @@ export default function Home() {
     if (
       !titleRef.current ||
       !subtitleRef.current ||
-      !cardRef.current ||
-      !featuresRef.current
+      !cardRef.current
+      // !featuresRef.current
     ) {
       console.error("Some refs are not available");
       return;
@@ -61,17 +61,17 @@ export default function Home() {
     );
 
     // First animate the features container
-    tl.from(
-      featuresRef.current,
-      {
-        y: 20,
-        duration: 0.8,
-        onComplete: () => {
-          console.log("Features animation complete", featuresRef.current);
-        },
-      },
-      "-=0.2"
-    );
+    // tl.from(
+    //   featuresRef.current,
+    //   {
+    //     y: 20,
+    //     duration: 0.8,
+    //     onComplete: () => {
+    //       console.log("Features animation complete", featuresRef.current);
+    //     },
+    //   },
+    //   "-=0.2"
+    // );
 
     // Then do staggered animation for feature cards
     // tl.from(
