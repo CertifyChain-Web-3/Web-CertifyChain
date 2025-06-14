@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
@@ -14,6 +14,13 @@ import gsap from 'gsap';
 // We're using the imported hook now
 
 export default function LoginPage() {
+  // Create a state to track client-side rendering
+  const [isClient, setIsClient] = useState(false);
+  
+  // Set isClient to true after component mounts to prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   // Refs for GSAP animations
   const pageRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -194,45 +201,47 @@ export default function LoginPage() {
       );
     }
     
-    
+    // Using a useEffect for client-side wallet connection status
+    // For SSR, we'll always render the same initial structure to avoid hydration mismatch
+    // Client will update the UI after hydration based on wallet connection
     return (
-      <>
-        {isConnected ? (
-          <>
-            <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-medium text-gray-800 dark:text-gray-200">Connected Wallet</span>
-                <button 
-                  onClick={() => disconnect()}
-                  className="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
-                >
-                  Disconnect
-                </button>
-              </div>
-              <div className="font-mono text-sm break-all bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 p-3 rounded">
-                {address}
-              </div>
+      <div className="space-y-4">
+        {isConnected && (
+          <div className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-medium text-gray-800 dark:text-gray-200">Connected Wallet</span>
+              <button 
+                onClick={() => disconnect()}
+                className="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+              >
+                Disconnect
+              </button>
             </div>
-            
-            <button
-              ref={buttonRef}
-              onClick={handleLogin}
-              disabled={isChecking || isAuthLoading}
-              className="w-full bg-blue-600 dark:bg-blue-700 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 dark:hover:bg-blue-600 transition-all transform hover:scale-105 duration-300 disabled:bg-blue-400 dark:disabled:bg-blue-800 disabled:transform-none"
-            >
-              {isChecking ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Checking Address...
-                </>
-              ) : (
-                <>
-                  Continue
-                  <ArrowRight className="ml-2" size={18} />
-                </>
-              )}
-            </button>
-          </>
+            <div className="font-mono text-sm break-all bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 p-3 rounded">
+              {address}
+            </div>
+          </div>
+        )}
+        
+        {isConnected ? (
+          <button
+            ref={buttonRef}
+            onClick={handleLogin}
+            disabled={isChecking || isAuthLoading}
+            className="w-full bg-blue-600 dark:bg-blue-700 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 dark:hover:bg-blue-600 transition-all transform hover:scale-105 duration-300 disabled:bg-blue-400 dark:disabled:bg-blue-800 disabled:transform-none"
+          >
+            {isChecking ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Checking Address...
+              </>
+            ) : (
+              <>
+                Continue
+                <ArrowRight className="ml-2" size={18} />
+              </>
+            )}
+          </button>
         ) : (
           <button
             ref={buttonRef}
@@ -243,7 +252,7 @@ export default function LoginPage() {
             Connect Wallet
           </button>
         )}
-      </>
+      </div>
     );
   };
 
