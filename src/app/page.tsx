@@ -10,7 +10,7 @@ export default function Home() {
   // Control para asegurar renderizado del lado del cliente
   const [isClient, setIsClient] = useState(false);
   const [featuresVisible, setFeaturesVisible] = useState(true);
-  
+
   // References for GSAP animations
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
@@ -36,42 +36,38 @@ export default function Home() {
   useEffect(() => {
     // No ejecutar animaciones si no estamos en el cliente
     if (!isClient) return;
-    
+
     // Asegurarnos de que el elemento de características sea visible desde el principio
     if (featuresRef.current) {
       // Añadimos estilo directamente para asegurar visibilidad
-      featuresRef.current.style.opacity = '1';
-      featuresRef.current.style.transform = 'none';
-      featuresRef.current.style.visibility = 'visible';
+      featuresRef.current.style.opacity = "1";
+      featuresRef.current.style.transform = "none";
+      featuresRef.current.style.visibility = "visible";
     }
 
     // Asegurar que todos los elementos necesarios existen antes de animar
-    if (
-      !titleRef.current ||
-      !subtitleRef.current ||
-      !cardRef.current
-    ) {
+    if (!titleRef.current || !subtitleRef.current || !cardRef.current) {
       console.error("Some critical refs are not available");
       return;
     }
 
     // Initial animations when the page loads
-    const tl = gsap.timeline({ 
+    const tl = gsap.timeline({
       defaults: { opacity: 0, ease: "power2.out" },
       onComplete: () => {
         // Asegurarnos de que todo sea visible al final
-        if (titleRef.current) titleRef.current.style.opacity = '1';
-        if (subtitleRef.current) subtitleRef.current.style.opacity = '1';
-        if (cardRef.current) cardRef.current.style.opacity = '1';
-        if (featuresRef.current) featuresRef.current.style.opacity = '1';
-      }
+        if (titleRef.current) titleRef.current.style.opacity = "1";
+        if (subtitleRef.current) subtitleRef.current.style.opacity = "1";
+        if (cardRef.current) cardRef.current.style.opacity = "1";
+        if (featuresRef.current) featuresRef.current.style.opacity = "1";
+      },
     });
 
     // Fade in and slight y movement for title and subtitle
     tl.from(titleRef.current, {
       y: -30,
       duration: 0.8,
-      clearProps: "all"
+      clearProps: "all",
     });
 
     tl.from(
@@ -79,7 +75,7 @@ export default function Home() {
       {
         y: -20,
         duration: 0.8,
-        clearProps: "all"
+        clearProps: "all",
       },
       "-=0.4"
     );
@@ -91,7 +87,7 @@ export default function Home() {
         y: 40,
         duration: 1,
         ease: "elastic.out(1, 0.5)",
-        clearProps: "all"
+        clearProps: "all",
       },
       "-=0.4"
     );
@@ -109,8 +105,8 @@ export default function Home() {
             console.log("Features animation complete", featuresRef.current);
             // Doble verificación de visibilidad
             if (featuresRef.current) {
-              featuresRef.current.style.opacity = '1';
-              featuresRef.current.style.visibility = 'visible';
+              featuresRef.current.style.opacity = "1";
+              featuresRef.current.style.visibility = "visible";
             }
           },
         },
@@ -124,7 +120,7 @@ export default function Home() {
           y: 30,
           stagger: 0.2,
           duration: 0.7,
-          clearProps: "all" // Limpiar propiedades para evitar problemas
+          clearProps: "all", // Limpiar propiedades para evitar problemas
         },
         "-=0.6"
       );
@@ -164,7 +160,7 @@ export default function Home() {
               className="mx-auto mb-4"
               priority
             /> */}
-            <p className="text-white text-center text-2xl mb-6">
+            <p className="text-black dark:text-white text-center text-2xl mb-6">
               Get started with CertifyChain!
             </p>
 

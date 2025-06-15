@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import gsap from "gsap";
 
-export default function CheckAddressPage() {
+function CheckAddressContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
@@ -208,5 +208,23 @@ export default function CheckAddressPage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Wrap the component that uses useSearchParams in Suspense
+export default function CheckAddressPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-black">
+        <div className="w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+          <h1 className="text-3xl font-bold mb-6 text-center text-black dark:text-white">Loading...</h1>
+          <div className="flex justify-center">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600 dark:text-blue-400" />
+          </div>
+        </div>
+      </div>
+    }>
+      <CheckAddressContent />
+    </Suspense>
   );
 }

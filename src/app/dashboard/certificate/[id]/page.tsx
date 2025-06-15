@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   ArrowLeft,
   Download,
@@ -14,8 +14,25 @@ import {
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
-import Image from "next/image";
 import html2canvas from "html2canvas";
+
+// Define Certificate type to avoid 'any'
+interface Certificate {
+  id: string;
+  title: string;
+  university: string;
+  universityWallet: string;
+  recipientName: string;
+  recipientWallet: string;
+  issueDate: string;
+  expiryDate?: string;
+  description: string;
+  certificateId: string;
+  tokenId: string;
+  transactionHash: string;
+  blockNumber: number;
+  timestamp: string;
+}
 
 // Mock certificate data
 const mockCertificateData = {
@@ -38,13 +55,14 @@ const mockCertificateData = {
 };
 
 export default function CertificateViewPage() {
-  const router = useRouter();
   const params = useParams();
-  const { address } = useAccount();
+  // We're keeping the useAccount hook to maintain component functionality
+  // even though we're not directly using the address
+  useAccount();
   const certificateRef = useRef<HTMLDivElement>(null);
 
   const [loading, setLoading] = useState(true);
-  const [certificate, setCertificate] = useState<any>(null);
+  const [certificate, setCertificate] = useState<Certificate | null>(null);
   const [verificationStatus, setVerificationStatus] = useState<
     "verified" | "pending" | "failed" | null
   >(null);
@@ -136,7 +154,11 @@ export default function CertificateViewPage() {
         // Recipient name
         ctx.font = "bold 16px sans-serif";
         ctx.fillStyle = "#4b5563"; // gray-600 equivalent
-        ctx.fillText(certificate.recipientName, centerX, 85);
+        if (certificate?.recipientName) {
+          ctx.fillText(certificate.recipientName, centerX, 85);
+        } else {
+          ctx.fillText("Recipient Name", centerX, 85);
+        }
 
         // has successfully completed
         ctx.font = "12px sans-serif";
@@ -150,13 +172,17 @@ export default function CertificateViewPage() {
         // Degree title
         ctx.font = "bold 20px sans-serif";
         ctx.fillStyle = "#6b7280"; // gray-500 equivalent
-        ctx.fillText(certificate.title, centerX, 140);
+        if (certificate?.title) {
+          ctx.fillText(certificate.title, centerX, 140);
+        } else {
+          ctx.fillText("Certificate Title", centerX, 140);
+        }
 
         // Award date
         ctx.font = "12px sans-serif";
         ctx.fillStyle = "#6b7280"; // gray-500 equivalent
         ctx.fillText(
-          `Awarded on ${new Date(certificate.issueDate).toLocaleDateString()}`,
+          `Awarded on ${certificate?.issueDate ? new Date(certificate.issueDate).toLocaleDateString() : "Date"}`,
           centerX,
           170
         );
