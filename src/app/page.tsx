@@ -22,12 +22,14 @@ import {
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import toast from "react-hot-toast";
 import ButtonDirectAuth from "@/components/customs/ButtonDirectAuth";
+import { useRouter } from "next/navigation";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const heroRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLDivElement>(null);
@@ -136,7 +138,7 @@ export default function HomePage() {
   };
 
   const handleGetStarted = () => {
-    toast.success("Get started feature coming soon!");
+    router.push("/auth/sign-up");
   };
 
   return (
@@ -635,49 +637,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Ready to Secure Your Certificates?
-          </h2>
-          <p className="text-xl text-purple-200 mb-8 max-w-2xl mx-auto">
-            Join thousands of institutions and individuals using CertifyChain
-            for secure certificate verification
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={handleGetStarted}
-              size="lg"
-              className="bg-white text-purple-900 hover:bg-purple-50 px-8 py-3 text-lg font-semibold rounded-full"
-            >
-              Get Started Now
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-white hover:bg-white text-purple-900 px-8 py-3 text-lg font-semibold rounded-full"
-            >
-              Learn More
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer id="contact" className="bg-purple-950 py-12 px-4">
         <div className="container mx-auto">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-purple-900" />
-                </div>
-                <span className="text-white font-bold text-xl">
-                  CertifyChain
-                </span>
-              </div>
+              <Image
+                src="/assets/logo-long.png"
+                alt="Logo"
+                height={70}
+                width={120}
+                className="mb-2"
+              />
               <p className="text-purple-200 text-sm">
                 Next-generation certificate powered by MONAD Network blockchain
               </p>
