@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -15,6 +15,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useAccount } from "wagmi";
 import Image from "next/image";
+import html2canvas from "html2canvas";
 
 // Mock certificate data
 const mockCertificateData = {
@@ -22,10 +23,10 @@ const mockCertificateData = {
   title: "Bachelor of Computer Science",
   university: "University of Technology",
   universityWallet: "0xabcd1234abcd1234abcd1234abcd1234abcd1234",
-  recipientName: "John Doe",
+  recipientName: "Satoshi Nakamoto",
   recipientWallet: "0x1234abcd1234abcd1234abcd1234abcd1234abcd",
   issueDate: "2025-05-15",
-  expiryDate: "2045-05-15",
+  // expiryDate: "2045-05-15",
   description:
     "This certificate is awarded for successful completion of the Bachelor of Computer Science program with honors, specializing in Artificial Intelligence and Machine Learning.",
   certificateId: "2025-CS-001",
@@ -40,6 +41,7 @@ export default function CertificateViewPage() {
   const router = useRouter();
   const params = useParams();
   const { address } = useAccount();
+  const certificateRef = useRef<HTMLDivElement>(null);
 
   const [loading, setLoading] = useState(true);
   const [certificate, setCertificate] = useState<any>(null);
@@ -70,9 +72,194 @@ export default function CertificateViewPage() {
     fetchCertificate();
   }, [params.id]);
 
-  const handleDownload = () => {
-    // In a real app, this would generate and download the certificate
-    toast.success("Certificate downloaded");
+  const handleDownload = async () => {
+    try {
+      // Make sure we have the certificate element to capture
+      if (!certificateRef.current) {
+        throw new Error("Certificate element not found");
+      }
+
+      // Show loading toast
+      const loadingToast = toast.loading("Generating certificate image...");
+
+      // Get the certificate ID for the filename
+      const certId = certificate?.certificateId || params.id;
+      const filename = `certificate-${certId}.png`;
+
+      try {
+        // First attempt: Try to use domtoimage as a fallback if available
+        // Create a drawing of the certificate using the canvas API directly
+        const element = certificateRef.current;
+        const rect = element.getBoundingClientRect();
+
+        // Create a canvas element with the same dimensions
+        const canvas = document.createElement("canvas");
+        canvas.width = rect.width * 2; // 2x for better quality
+        canvas.height = rect.height * 2;
+
+        // Get canvas context and set background
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("Could not get canvas context");
+
+        // Fill with white background
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Scale up for higher quality
+        ctx.scale(2, 2);
+
+        // Draw border similar to the one in the certificate
+        ctx.strokeStyle = "#1e40af"; // blue-800 equivalent
+        ctx.lineWidth = 4;
+        const padding = 8; // Similar to the p-8 in the original
+        ctx.strokeRect(
+          padding,
+          padding,
+          rect.width - padding * 2,
+          rect.height - padding * 2
+        );
+
+        // Draw certificate content
+        ctx.textAlign = "center";
+        const centerX = rect.width / 2;
+
+        // University name
+        ctx.font = "bold 16px serif";
+        ctx.fillStyle = "#1e40af"; // blue-800 equivalent
+        ctx.fillText("UNIVERSITY OF TECHNOLOGY", centerX, 40);
+
+        // This certifies that
+        ctx.font = "12px sans-serif";
+        ctx.fillStyle = "#6b7280"; // gray-500 equivalent
+        ctx.fillText("This certifies that", centerX, 60);
+
+        // Recipient name
+        ctx.font = "bold 16px sans-serif";
+        ctx.fillStyle = "#4b5563"; // gray-600 equivalent
+        ctx.fillText(certificate.recipientName, centerX, 85);
+
+        // has successfully completed
+        ctx.font = "12px sans-serif";
+        ctx.fillStyle = "#6b7280"; // gray-500 equivalent
+        ctx.fillText(
+          "has successfully completed the requirements for the degree of",
+          centerX,
+          110
+        );
+
+        // Degree title
+        ctx.font = "bold 20px sans-serif";
+        ctx.fillStyle = "#6b7280"; // gray-500 equivalent
+        ctx.fillText(certificate.title, centerX, 140);
+
+        // Award date
+        ctx.font = "12px sans-serif";
+        ctx.fillStyle = "#6b7280"; // gray-500 equivalent
+        ctx.fillText(
+          `Awarded on ${new Date(certificate.issueDate).toLocaleDateString()}`,
+          centerX,
+          170
+        );
+
+        // Convert canvas to blob
+        const blob = await new Promise<Blob>((resolve) => {
+          canvas.toBlob((b) => resolve(b!), "image/png", 1.0);
+        });
+
+        // Create download link
+        const blobUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement("a");
+        downloadLink.href = blobUrl;
+        downloadLink.download = filename;
+        downloadLink.style.display = "none";
+
+        // Add to DOM, click and remove
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        // Clean up
+        URL.revokeObjectURL(blobUrl);
+      } catch (canvasError) {
+        console.error("Canvas approach failed:", canvasError);
+        // If canvas approach fails, try html2canvas with safeguards
+
+        // Create a clone of the element and modify its styles to avoid oklch
+        const clone = certificateRef.current.cloneNode(true) as HTMLElement;
+        clone.style.visibility = "hidden";
+        clone.style.position = "absolute";
+        clone.style.top = "-9999px";
+        document.body.appendChild(clone);
+
+        // Replace any potential oklch colors with safe alternatives
+        const allElements = clone.querySelectorAll("*");
+        allElements.forEach((el) => {
+          if (el instanceof HTMLElement) {
+            // Set safe colors that won't use oklch
+            if (el.style.color && el.style.color.includes("oklch")) {
+              el.style.color = "#000000";
+            }
+            if (
+              el.style.backgroundColor &&
+              el.style.backgroundColor.includes("oklch")
+            ) {
+              el.style.backgroundColor = "#FFFFFF";
+            }
+            if (
+              el.style.borderColor &&
+              el.style.borderColor.includes("oklch")
+            ) {
+              el.style.borderColor = "#1e40af"; // Standard hex for blue
+            }
+          }
+        });
+
+        try {
+          // Now try html2canvas on the sanitized clone
+          const canvas = await html2canvas(clone, {
+            scale: 2,
+            backgroundColor: "#FFFFFF",
+            logging: false,
+          });
+
+          // Remove the clone
+          document.body.removeChild(clone);
+
+          // Convert to blob and download
+          const blob = await new Promise<Blob>((resolve) => {
+            canvas.toBlob(
+              (blob) => {
+                resolve(blob!);
+              },
+              "image/png",
+              0.95
+            );
+          });
+
+          const blobUrl = window.URL.createObjectURL(blob);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = blobUrl;
+          downloadLink.download = filename;
+          downloadLink.style.display = "none";
+
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+
+          window.URL.revokeObjectURL(blobUrl);
+        } catch (html2canvasError) {
+          console.error("HTML2Canvas approach also failed:", html2canvasError);
+          throw html2canvasError;
+        }
+      }
+
+      // Clear loading toast and show success
+      toast.dismiss(loadingToast);
+      toast.success("Certificate downloaded successfully");
+    } catch (error) {
+      console.error("Error downloading certificate:", error);
+      toast.error("Failed to download certificate");
+    }
   };
 
   const handleShare = () => {
@@ -179,7 +366,10 @@ export default function CertificateViewPage() {
             <div className="mb-8 flex justify-center">
               <div className="border rounded-lg overflow-hidden w-full max-w-lg">
                 {/* Mock certificate image - in a real app, this would be the actual certificate */}
-                <div className="relative h-80 w-full border-b bg-gray-50 flex items-center justify-center p-6">
+                <div
+                  ref={certificateRef}
+                  className="relative h-80 w-full border-b bg-gray-50 flex items-center justify-center p-6"
+                >
                   <div className="text-center border-4 border-blue-800 p-8 w-full h-full flex flex-col items-center justify-center">
                     <div className="text-xl font-serif mb-2 text-blue-800">
                       UNIVERSITY OF TECHNOLOGY
@@ -208,7 +398,7 @@ export default function CertificateViewPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div>
-                <h2 className="text-lg font-semibold mb-4">
+                <h2 className="text-lg font-semibold mb-4 text-gray-900">
                   Certificate Details
                 </h2>
                 <dl className="space-y-2">
@@ -258,7 +448,7 @@ export default function CertificateViewPage() {
               </div>
 
               <div>
-                <h2 className="text-lg font-semibold mb-4">
+                <h2 className="text-lg font-semibold mb-4 text-gray-900">
                   Blockchain Details
                 </h2>
                 <dl className="space-y-2">

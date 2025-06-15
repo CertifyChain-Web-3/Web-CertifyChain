@@ -111,7 +111,9 @@ export default function SignUpPage() {
                       <User className="h-6 w-6 text-blue-600" />
                     </div>
                     <div className="text-left">
-                      <h3 className="font-semibold text-gray-700">Student</h3>
+                      <h3 className="font-semibold text-gray-700">
+                        Student / Employer
+                      </h3>
                       <p className="text-sm text-gray-500">
                         View and verify certificates
                       </p>

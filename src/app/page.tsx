@@ -3,41 +3,75 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export default function Home() {
+  // Control para asegurar renderizado del lado del cliente
+  const [isClient, setIsClient] = useState(false);
+  const [featuresVisible, setFeaturesVisible] = useState(true);
+  
   // References for GSAP animations
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLParagraphElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  // const featuresRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
 
-  // GSAP animations
+  // Establecer isClient a true después de montar el componente
   useEffect(() => {
-    // Ensure elements exist before animating
+    setIsClient(true);
+  }, []);
+
+  // Hacer que featuresVisible sea true desde el inicio
+  useEffect(() => {
+    setFeaturesVisible(true);
+  }, []);
+
+  // Establecer isClient a true después de montar el componente
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // GSAP animations - ejecutar sólo del lado del cliente
+  useEffect(() => {
+    // No ejecutar animaciones si no estamos en el cliente
+    if (!isClient) return;
+    
+    // Asegurarnos de que el elemento de características sea visible desde el principio
+    if (featuresRef.current) {
+      // Añadimos estilo directamente para asegurar visibilidad
+      featuresRef.current.style.opacity = '1';
+      featuresRef.current.style.transform = 'none';
+      featuresRef.current.style.visibility = 'visible';
+    }
+
+    // Asegurar que todos los elementos necesarios existen antes de animar
     if (
       !titleRef.current ||
       !subtitleRef.current ||
       !cardRef.current
-      // !featuresRef.current
     ) {
-      console.error("Some refs are not available");
+      console.error("Some critical refs are not available");
       return;
     }
 
-    // Make sure features section is visible before animating
-    document
-      .getElementById("features-section")
-      ?.scrollIntoView({ behavior: "auto", block: "end" });
-
     // Initial animations when the page loads
-    const tl = gsap.timeline({ defaults: { opacity: 0, ease: "power2.out" } });
+    const tl = gsap.timeline({ 
+      defaults: { opacity: 0, ease: "power2.out" },
+      onComplete: () => {
+        // Asegurarnos de que todo sea visible al final
+        if (titleRef.current) titleRef.current.style.opacity = '1';
+        if (subtitleRef.current) subtitleRef.current.style.opacity = '1';
+        if (cardRef.current) cardRef.current.style.opacity = '1';
+        if (featuresRef.current) featuresRef.current.style.opacity = '1';
+      }
+    });
 
     // Fade in and slight y movement for title and subtitle
     tl.from(titleRef.current, {
       y: -30,
       duration: 0.8,
+      clearProps: "all"
     });
 
     tl.from(
@@ -45,6 +79,7 @@ export default function Home() {
       {
         y: -20,
         duration: 0.8,
+        clearProps: "all"
       },
       "-=0.4"
     );
@@ -56,34 +91,45 @@ export default function Home() {
         y: 40,
         duration: 1,
         ease: "elastic.out(1, 0.5)",
+        clearProps: "all"
       },
       "-=0.4"
     );
 
-    // First animate the features container
-    // tl.from(
-    //   featuresRef.current,
-    //   {
-    //     y: 20,
-    //     duration: 0.8,
-    //     onComplete: () => {
-    //       console.log("Features animation complete", featuresRef.current);
-    //     },
-    //   },
-    //   "-=0.2"
-    // );
+    // Si featuresRef está disponible
+    if (featuresRef.current) {
+      // First animate the features container
+      tl.from(
+        featuresRef.current,
+        {
+          y: 20,
+          duration: 0.8,
+          clearProps: "all", // Importante: limpiar propiedades para evitar estado residual
+          onComplete: () => {
+            console.log("Features animation complete", featuresRef.current);
+            // Doble verificación de visibilidad
+            if (featuresRef.current) {
+              featuresRef.current.style.opacity = '1';
+              featuresRef.current.style.visibility = 'visible';
+            }
+          },
+        },
+        "-=0.2"
+      );
 
-    // Then do staggered animation for feature cards
-    // tl.from(
-    //   ".feature-card",
-    //   {
-    //     y: 30,
-    //     stagger: 0.2,
-    //     duration: 0.7,
-    //   },
-    //   "-=0.6"
-    // );
-  }, []);
+      // Then do staggered animation for feature cards
+      tl.from(
+        ".feature-card",
+        {
+          y: 30,
+          stagger: 0.2,
+          duration: 0.7,
+          clearProps: "all" // Limpiar propiedades para evitar problemas
+        },
+        "-=0.6"
+      );
+    }
+  }, [isClient]);
   return (
     <div className="flex flex-col items-center p-8 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-black text-black dark:text-white">
       <main className="flex flex-col items-center max-w-4xl mx-auto text-center w-full">
@@ -145,7 +191,8 @@ export default function Home() {
         <section id="features-section" className="py-8 w-full">
           <h2 className="text-2xl font-bold mb-6">Our Features</h2>
           <div
-            // ref={featuresRef}
+            ref={featuresRef}
+            style={{ opacity: 1, visibility: "visible" }}
             className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl"
           >
             <div className="feature-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 transform hover:-translate-y-1 duration-300">
