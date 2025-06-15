@@ -88,7 +88,7 @@ export default function StudentOnboardingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
       <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold mb-6 text-center text-black">
           {formData.type === "student" ? "Student" : "Company"} Onboarding
@@ -99,7 +99,7 @@ export default function StudentOnboardingPage() {
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
                 step >= 1
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
             >
@@ -107,13 +107,13 @@ export default function StudentOnboardingPage() {
             </div>
             <div
               className={`h-1 flex-1 mx-2 ${
-                step >= 2 ? "bg-blue-600" : "bg-gray-200"
+                step >= 2 ? "bg-purple-600" : "bg-gray-200"
               }`}
             />
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
                 step >= 2
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
             >
@@ -121,13 +121,13 @@ export default function StudentOnboardingPage() {
             </div>
             <div
               className={`h-1 flex-1 mx-2 ${
-                step >= 3 ? "bg-blue-600" : "bg-gray-200"
+                step >= 3 ? "bg-purple-600" : "bg-gray-200"
               }`}
             />
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
                 step >= 3
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
             >
@@ -151,7 +151,7 @@ export default function StudentOnboardingPage() {
                 name="type"
                 value={formData.type}
                 onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-500"
               >
                 <option value="student">Student</option>
                 <option value="company">Company/Employer</option>
@@ -168,7 +168,7 @@ export default function StudentOnboardingPage() {
                 value={formData.name}
                 onChange={handleInputChange}
                 placeholder="Enter your full name"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-500"
                 required
               />
             </div>
@@ -183,7 +183,7 @@ export default function StudentOnboardingPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email address"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-500"
                 required
               />
             </div>
@@ -199,7 +199,7 @@ export default function StudentOnboardingPage() {
                   value={formData.studentId}
                   onChange={handleInputChange}
                   placeholder="Enter your student ID"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-500"
                   required
                 />
               </div>
@@ -214,7 +214,7 @@ export default function StudentOnboardingPage() {
                   value={formData.companyName}
                   onChange={handleInputChange}
                   placeholder="Enter your company name"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-500"
                   required
                 />
               </div>
@@ -223,7 +223,7 @@ export default function StudentOnboardingPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors disabled:bg-blue-300 mt-6"
+              className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-purple-700 transition-colors disabled:bg-purple-300 mt-6"
             >
               {isSubmitting ? (
                 <>
@@ -275,7 +275,7 @@ export default function StudentOnboardingPage() {
                 <button
                   onClick={handleConnectWallet}
                   disabled={isSubmitting}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+                  className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-purple-700 transition-colors disabled:bg-purple-300"
                 >
                   {isSubmitting ? (
                     <>
@@ -293,7 +293,7 @@ export default function StudentOnboardingPage() {
             ) : (
               <button
                 onClick={openConnectModal}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+                className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-purple-700 transition-colors"
               >
                 <Wallet className="mr-2" size={18} />
                 Connect Wallet
@@ -316,7 +316,7 @@ export default function StudentOnboardingPage() {
 
             <Link
               href="/dashboard"
-              className="bg-blue-600 text-white py-3 px-6 rounded-lg flex items-center justify-center w-full hover:bg-blue-700 transition-colors"
+              className="bg-purple-600 text-white py-3 px-6 rounded-lg flex items-center justify-center w-full hover:bg-purple-700 transition-colors"
             >
               Go to Dashboard
               <ArrowRight className="ml-2" size={18} />

@@ -134,7 +134,7 @@ export default function HomePage() {
   }, []);
 
   const handleVerifyCertificate = () => {
-    toast.success("Certificate verification feature coming soon!");
+    router.push("/auth/choose-type");
   };
 
   const handleGetStarted = () => {

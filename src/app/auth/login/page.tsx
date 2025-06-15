@@ -469,7 +469,7 @@ export default function LoginPage() {
   return (
     <div
       ref={pageRef}
-      className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-black"
+      className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900"
     >
       <div
         ref={cardRef}

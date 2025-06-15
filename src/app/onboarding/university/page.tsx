@@ -86,7 +86,7 @@ export default function UniversityOnboardingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
       <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold mb-6 text-center text-black">
           University Onboarding
@@ -97,7 +97,7 @@ export default function UniversityOnboardingPage() {
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
                 step >= 1
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
             >
@@ -105,13 +105,13 @@ export default function UniversityOnboardingPage() {
             </div>
             <div
               className={`h-1 flex-1 mx-2 ${
-                step >= 2 ? "bg-blue-600" : "bg-gray-200"
+                step >= 2 ? "bg-purple-600" : "bg-gray-200"
               }`}
             />
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
                 step >= 2
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
             >
@@ -119,13 +119,13 @@ export default function UniversityOnboardingPage() {
             </div>
             <div
               className={`h-1 flex-1 mx-2 ${
-                step >= 3 ? "bg-blue-600" : "bg-gray-200"
+                step >= 3 ? "bg-purple-600" : "bg-gray-200"
               }`}
             />
             <div
               className={`flex items-center justify-center w-8 h-8 rounded-full ${
                 step >= 3
-                  ? "bg-blue-600 text-white"
+                  ? "bg-purple-600 text-white"
                   : "bg-gray-200 text-gray-600"
               }`}
             >
@@ -153,7 +153,7 @@ export default function UniversityOnboardingPage() {
                 htmlFor="universityDocument"
                 className="cursor-pointer block p-4"
               >
-                <Upload className="mx-auto h-12 w-12 text-blue-600 mb-4" />
+                <Upload className="mx-auto h-12 w-12 text-purple-600 mb-4" />
                 <h3 className="font-medium mb-1 text-gray-700">
                   Upload official university letter
                 </h3>
@@ -161,11 +161,11 @@ export default function UniversityOnboardingPage() {
                   PDF, DOC, or image files up to 10MB
                 </p>
                 {fileName ? (
-                  <div className="mt-2 p-2 bg-blue-50 text-blue-700 rounded-lg">
+                  <div className="mt-2 p-2 bg-purple-50 text-purple-700 rounded-lg">
                     <p className="font-medium text-sm break-all">{fileName}</p>
                   </div>
                 ) : (
-                  <div className="mt-2 bg-blue-600 text-white py-2 px-4 rounded-lg inline-block">
+                  <div className="mt-2 bg-purple-600 text-white py-2 px-4 rounded-lg inline-block">
                     Choose File
                   </div>
                 )}
@@ -183,7 +183,7 @@ export default function UniversityOnboardingPage() {
             <button
               type="submit"
               disabled={!fileName || isSubmitting}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+              className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-purple-700 transition-colors disabled:bg-purple-300"
             >
               {isSubmitting ? (
                 <>
@@ -235,7 +235,7 @@ export default function UniversityOnboardingPage() {
                 <button
                   onClick={handleConnectCampusWallet}
                   disabled={isSubmitting}
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors disabled:bg-blue-300 cursor-pointer"
+                  className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-purple-700 transition-colors disabled:bg-purple-300 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
@@ -253,7 +253,7 @@ export default function UniversityOnboardingPage() {
             ) : (
               <button
                 onClick={openConnectModal}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+                className="w-full bg-purple-600 text-white py-3 rounded-lg flex items-center justify-center hover:bg-purple-700 transition-colors"
               >
                 <Wallet className="mr-2" size={18} />
                 Connect Campus Wallet
@@ -265,8 +265,8 @@ export default function UniversityOnboardingPage() {
         {step === 3 && (
           <div className="space-y-6">
             {verificationStatus === "pending" ? (
-              <div className="p-6 border rounded-lg bg-blue-50 text-center">
-                <Loader2 className="mx-auto h-12 w-12 animate-spin text-blue-600 mb-4" />
+              <div className="p-6 border rounded-lg bg-purple-50 text-center">
+                <Loader2 className="mx-auto h-12 w-12 animate-spin text-purple-600 mb-4" />
                 <h2 className="text-xl font-semibold mb-2 text-gray-800">
                   Verification in Progress
                 </h2>
@@ -304,7 +304,7 @@ export default function UniversityOnboardingPage() {
 
                 <Link
                   href="/dashboard"
-                  className="bg-blue-600 text-white py-3 px-6 rounded-lg flex items-center justify-center w-full hover:bg-blue-700 transition-colors"
+                  className="bg-purple-600 text-white py-3 px-6 rounded-lg flex items-center justify-center w-full hover:bg-purple-700 transition-colors"
                 >
                   Go to Dashboard
                   <ArrowRight className="ml-2" size={18} />
