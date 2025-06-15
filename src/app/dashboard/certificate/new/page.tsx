@@ -79,12 +79,12 @@ export default function NewCertificatePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <Link
             href="/dashboard"
-            className="text-blue-600 flex items-center hover:text-blue-800"
+            className="text-white flex items-center hover:text-slate-100"
           >
             <ArrowLeft className="mr-2" size={18} />
             Back to Dashboard
@@ -256,7 +256,7 @@ export default function NewCertificatePage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-blue-600 text-white py-3 px-8 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors disabled:bg-blue-300"
+                  className="bg-purple-600 text-white py-3 px-8 rounded-lg flex items-center justify-center hover:bg-purple-700 transition-colors disabled:bg-purple-300"
                 >
                   {isSubmitting ? (
                     <>

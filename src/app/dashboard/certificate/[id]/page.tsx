@@ -143,7 +143,7 @@ export default function CertificateViewPage() {
 
         // University name
         ctx.font = "bold 16px serif";
-        ctx.fillStyle = "#1e40af"; // blue-800 equivalent
+        ctx.fillStyle = "#511eaf"; // blue-800 equivalent
         ctx.fillText("UNIVERSITY OF TECHNOLOGY", centerX, 40);
 
         // This certifies that
@@ -182,7 +182,11 @@ export default function CertificateViewPage() {
         ctx.font = "12px sans-serif";
         ctx.fillStyle = "#6b7280"; // gray-500 equivalent
         ctx.fillText(
-          `Awarded on ${certificate?.issueDate ? new Date(certificate.issueDate).toLocaleDateString() : "Date"}`,
+          `Awarded on ${
+            certificate?.issueDate
+              ? new Date(certificate.issueDate).toLocaleDateString()
+              : "Date"
+          }`,
           centerX,
           170
         );
@@ -307,7 +311,7 @@ export default function CertificateViewPage() {
 
   if (!certificate) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="min-h-screen py-12 px-4 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
             <Link
@@ -339,12 +343,12 @@ export default function CertificateViewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen py-12 px-4 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link
             href="/dashboard"
-            className="text-blue-600 flex items-center hover:text-blue-800"
+            className="text-white flex items-center hover:text-slate-100"
           >
             <ArrowLeft className="mr-2" size={18} />
             Back to Dashboard
@@ -466,10 +470,10 @@ export default function CertificateViewPage() {
                     <dt className="text-sm font-medium text-gray-500 sm:w-40">
                       Description
                     </dt>
-                    <dd className="text-sm text-gray-900">
-                      {certificate.description}
-                    </dd>
                   </div>
+                  <p className="text-sm text-gray-900">
+                    {certificate.description}
+                  </p>
                 </dl>
               </div>
 
@@ -480,7 +484,7 @@ export default function CertificateViewPage() {
                 <dl className="space-y-2">
                   <div className="flex flex-col">
                     <dt className="text-sm font-medium text-gray-500">
-                      Token ID
+                      Certificate ID
                     </dt>
                     <dd className="text-sm text-gray-900 font-mono">
                       {certificate.tokenId}
@@ -518,14 +522,6 @@ export default function CertificateViewPage() {
                       </a>
                     </dd>
                   </div>
-                  <div className="flex flex-col">
-                    <dt className="text-sm font-medium text-gray-500">
-                      Block Number
-                    </dt>
-                    <dd className="text-sm text-gray-900 font-mono">
-                      {certificate.blockNumber}
-                    </dd>
-                  </div>
                 </dl>
               </div>
             </div>
@@ -541,7 +537,7 @@ export default function CertificateViewPage() {
 
               <button
                 onClick={handleDownload}
-                className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+                className="flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download Certificate

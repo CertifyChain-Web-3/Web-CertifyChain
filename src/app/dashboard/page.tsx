@@ -1,296 +1,303 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
-  Plus,
-  FileText,
-  RefreshCcw,
   Search,
-  Loader2,
+  Plus,
   ExternalLink,
   Download,
-  LogOut,
-  User,
   BookOpen,
-  School,
+  Wallet,
+  LogOut,
 } from "lucide-react";
-import Link from "next/link";
-import toast from "react-hot-toast";
-import { useAccount } from "wagmi";
-import { useUser } from "../context/UserContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
-// Mock data for certificates
-const mockCertificates = [
+interface Certificate {
+  id: number;
+  title: string;
+  university: string;
+  recipient: string;
+  issueDate: string;
+  tokenId: number;
+  // status: "verified" | "pending" | "expired";
+}
+
+const mockCertificates: Certificate[] = [
   {
-    id: "1",
+    id: 1,
     title: "Bachelor of Computer Science",
     university: "University of Technology",
     recipient: "0x1234...5678",
     issueDate: "2025-05-15",
-    tokenId: "42",
+    tokenId: 42,
+    // status: "verified",
   },
   {
-    id: "2",
+    id: 2,
     title: "Master of Business Administration",
     university: "Business School International",
     recipient: "0x8765...4321",
     issueDate: "2025-04-20",
-    tokenId: "43",
+    tokenId: 43,
+    // status: "verified",
   },
   {
-    id: "3",
+    id: 3,
     title: "Bachelor of Engineering",
     university: "Technical Institute",
     recipient: "0x9876...1234",
     issueDate: "2025-06-01",
-    tokenId: "44",
+    tokenId: 44,
+    // status: "pending",
+  },
+  {
+    id: 4,
+    title: "Certificate in Data Science",
+    university: "Digital Learning Academy",
+    recipient: "0x5432...8765",
+    issueDate: "2025-03-10",
+    tokenId: 45,
+    // status: "verified",
   },
 ];
 
-export default function DashboardPage() {
+export default function CertificateDashboard() {
   const router = useRouter();
-  const { address, isConnected } = useAccount();
-  const { isAuthenticated, userRole, userName, logout } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
-  const [certificates, setCertificates] = useState(mockCertificates);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [certificates] = useState<Certificate[]>(mockCertificates);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  useEffect(() => {
-    // Redirect to login if not authenticated
-    // if (!isAuthenticated) {
-    //   router.push('/auth/login');
-    //   return;
-    // }
-
-    // Fetch certificates based on user role
-    const fetchCertificates = async () => {
-      try {
-        // In a real application, you would fetch from the blockchain or your backend
-        // Here we're simulating API call latency
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Filter certificates based on role - universities see certificates they issued,
-        // students see certificates they own
-        // For now using mock data
-        setCertificates(mockCertificates);
-      } catch (error) {
-        console.error("Error fetching certificates:", error);
-        toast.error("Failed to load certificates data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCertificates();
-  }, [isAuthenticated, userRole, router]);
-
-  // Filter certificates based on search query
   const filteredCertificates = certificates.filter(
     (cert) =>
-      cert.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cert.university.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cert.recipient.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cert.tokenId.includes(searchQuery)
+      cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cert.university.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Function to refresh certificates list
-  const refreshCertificates = async () => {
-    setIsLoading(true);
-    try {
-      // In a real application, you would fetch from blockchain
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Certificates refreshed");
-    } catch (error) {
-      console.error("Error refreshing certificates:", error);
-      toast.error("Failed to refresh certificates");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold">Loading dashboard...</h2>
-        </div>
-      </div>
-    );
-  }
+  // const getStatusColor = (status: string) => {
+  //   switch (status) {
+  //     case "verified":
+  //       return "bg-green-100 text-green-800 border-green-200";
+  //     case "pending":
+  //       return "bg-yellow-100 text-yellow-800 border-yellow-200";
+  //     case "expired":
+  //       return "bg-red-100 text-red-800 border-red-200";
+  //     default:
+  //       return "bg-gray-100 text-gray-800 border-gray-200";
+  //   }
+  // };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center">
-            {userRole === "university" ? (
-              <School className="h-8 w-8 text-blue-600 mr-3" />
-            ) : (
-              <BookOpen className="h-8 w-8 text-blue-600 mr-3" />
-            )}
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {userRole === "university"
-                  ? "University Dashboard"
-                  : "Certificate Dashboard"}
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-700">
+      {/* Header */}
+      <header className="bg-white/10 backdrop-blur-md border-b border-white/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <BookOpen className="h-8 w-8 text-white" />
+              <h1 className="text-xl font-bold text-white">
+                Certificate Dashboard
               </h1>
-              {userName && <p className="text-sm text-gray-500">{userName}</p>}
             </div>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <div className="bg-gray-100 px-3 py-1 rounded-full text-sm flex items-center">
-              <User className="h-4 w-4 mr-2 text-gray-500" />
-              <span className="font-mono text-gray-500">
-                {address?.substring(0, 6)}...
-                {address?.substring(address?.length - 4)}
-              </span>
+            <div className="flex items-center space-x-4">
+              <span className="text-white/80 text-sm">0x71AF...7FB1</span>
+              <Button
+                onClick={() => setShowLogoutConfirm(true)}
+                className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"
+              >
+                <LogOut className="h-4 w-4 text-white" />
+              </Button>
             </div>
-
-            <button
-              onClick={() => logout()}
-              className="p-2 rounded-full hover:bg-gray-100"
-              title="Logout"
-            >
-              <LogOut className="h-5 w-5 text-gray-600" />
-            </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
-            <h2 className="text-xl font-semibold text-gray-700">
-              {userRole === "university"
-                ? "Issued Certificates"
-                : "Your Certificates"}
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search and Actions */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex-1">
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Your Certificates
             </h2>
-
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search certificates..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full text-gray-500"
-                />
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-
-              <button
-                onClick={refreshCertificates}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
-              >
-                <RefreshCcw size={18} className="mr" />
-              </button>
-
-              {/* {userRole === "university" && ( */}
-              <Link
-                href="/dashboard/certificate/new"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
-              >
-                <Plus size={18} className="mr-2" />
-                Issue New Certificate
-              </Link>
-              {/* )} */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search certificates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20"
+              />
             </div>
           </div>
-
-          {filteredCertificates.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Title
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      University
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recipient
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Issue Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Token ID
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredCertificates.map((cert) => (
-                    <tr key={cert.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {cert.title}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {cert.university}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                        {cert.recipient}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {cert.issueDate}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                        {cert.tokenId}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end space-x-2">
-                          <Link
-                            href={`/dashboard/certificate/${cert.id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            <ExternalLink size={18} />
-                          </Link>
-                          <button
-                            onClick={() => toast.success("Download started")}
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            <Download size={18} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-1">
-                No certificates found
-              </h3>
-              <p className="text-gray-500">
-                {searchQuery
-                  ? "No certificates match your search criteria."
-                  : userRole === "university"
-                  ? "You have not issued any certificates yet."
-                  : "You do not have any certificates yet."}
-              </p>
-
-              {userRole === "university" && !searchQuery && (
-                <Link
-                  href="/dashboard/certificate/new"
-                  className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
-                >
-                  <Plus size={18} className="mr-2" />
-                  Issue Your First Certificate
-                </Link>
-              )}
-            </div>
-          )}
+          <div className="flex items-end">
+            <Button
+              onClick={() => router.push("/dashboard/certificate/new")}
+              className="bg-white text-purple-700 hover:bg-white/90 font-medium px-6"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Issue New Certificate
+            </Button>
+          </div>
         </div>
+
+        {/* Certificates Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCertificates.map((certificate) => (
+            <Card
+              key={certificate.id}
+              className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/15 transition-all duration-200"
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <CardTitle className="text-white text-lg font-semibold leading-tight">
+                    {certificate.title}
+                  </CardTitle>
+                  {/* <Badge
+                    className={`${getStatusColor(
+                      certificate.status
+                    )} text-xs font-medium`}
+                  >
+                    {certificate.status}
+                  </Badge> */}
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-white/60 text-xs uppercase tracking-wide font-medium">
+                      University
+                    </p>
+                    <p className="text-white text-sm">
+                      {certificate.university}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-white/60 text-xs uppercase tracking-wide font-medium">
+                      Recipient
+                    </p>
+                    <p className="text-white text-sm font-mono">
+                      {certificate.recipient}
+                    </p>
+                  </div>
+                  <div className="flex justify-between">
+                    <div>
+                      <p className="text-white/60 text-xs uppercase tracking-wide font-medium">
+                        Issue Date
+                      </p>
+                      <p className="text-white text-sm">
+                        {certificate.issueDate}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-white/60 text-xs uppercase tracking-wide font-medium">
+                        Certificate ID
+                      </p>
+                      <p className="text-white text-sm font-mono">
+                        #{certificate.tokenId}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() =>
+                      router.push(`/dashboard/certificate/${certificate.id}`)
+                    }
+                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-1" />
+                    View
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    // onClick={() => router.push(`/dashboard/certificate/${certificate.id}`)}
+                    className="flex-1 bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    Download
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {filteredCertificates.length === 0 && (
+          <div className="text-center py-12">
+            <BookOpen className="h-12 w-12 text-white/40 mx-auto mb-4" />
+            <p className="text-white/60 text-lg">No certificates found</p>
+            <p className="text-white/40 text-sm">
+              Try adjusting your search terms
+            </p>
+          </div>
+        )}
       </main>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-sm bg-white">
+            <CardHeader>
+              <CardTitle>Confirm Logout</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-gray-600">
+                Are you sure you want to log out from your account?
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => router.push("/")}
+                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                >
+                  Logout
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Upload Modal Placeholder */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-md bg-white">
+            <CardHeader>
+              <CardTitle>Issue New Certificate</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-gray-600">
+                Certificate upload form would go here...
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShowUploadModal(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button className="flex-1 bg-purple-600 hover:bg-purple-700">
+                  Upload
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
