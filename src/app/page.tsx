@@ -719,7 +719,7 @@ export default function HomePage() {
 
           <div className="border-t border-purple-800 mt-8 pt-8 text-center">
             <p className="text-purple-300 text-sm">
-              © 2024 CertifyChain. All rights reserved. Powered by MONAD Network
+              © 2025 CertifyChain. All rights reserved.
             </p>
           </div>
         </div>
