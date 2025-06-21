@@ -23,6 +23,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import toast from "react-hot-toast";
 import ButtonDirectAuth from "@/components/customs/ButtonDirectAuth";
 import { useRouter } from "next/navigation";
+import { useAccount } from "wagmi";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -34,6 +35,7 @@ export default function HomePage() {
   const featuresRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLDivElement>(null);
   const certificateRef = useRef<HTMLDivElement>(null);
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -134,11 +136,11 @@ export default function HomePage() {
   }, []);
 
   const handleVerifyCertificate = () => {
-    router.push("/auth/login");
+    router.push("/dashboard");
   };
 
   const handleGetStarted = () => {
-    router.push("/auth/login");
+    router.push("/auth/sign-up");
   };
 
   return (
@@ -178,7 +180,7 @@ export default function HomePage() {
               href="#contact"
               className="text-white hover:text-purple-200 transition-colors"
             >
-              Testimony
+              Contact Us
             </a>
           </nav>
 
@@ -205,13 +207,25 @@ export default function HomePage() {
               </p>
 
               <div className="hero-cta">
-                <Button
+                {/* <Button
                   onClick={handleVerifyCertificate}
                   size="lg"
                   className="bg-white text-purple-900 hover:bg-purple-50 px-8 py-3 text-lg font-semibold rounded-full"
                 >
                   Verify Certificates Now
-                </Button>
+                </Button> */}
+                <ConnectButton />
+                {isConnected && (
+                  <div className="flex items-end">
+                    <Button
+                      onClick={handleVerifyCertificate}
+                      size="lg"
+                      className="bg-white text-purple-900 hover:bg-purple-50 px-8 py-3 text-lg font-semibold rounded-full"
+                    >
+                      Verify Certificates Now
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Feature badges */}
@@ -719,7 +733,7 @@ export default function HomePage() {
 
           <div className="border-t border-purple-800 mt-8 pt-8 text-center">
             <p className="text-purple-300 text-sm">
-              © 2025 CertifyChain. All rights reserved.
+              © 2025 CertifyChain. All rights reserved. Powered by MONAD Network
             </p>
           </div>
         </div>

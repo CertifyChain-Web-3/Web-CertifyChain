@@ -1,48 +1,58 @@
 "use client";
 
-import { RainbowKitProvider, getDefaultWallets } from "@rainbow-me/rainbowkit";
+import {
+  RainbowKitProvider,
+  getDefaultWallets,
+  getDefaultConfig,
+} from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { sepolia, mainnet } from "wagmi/chains";
-import { Toaster } from "react-hot-toast";
-import { UserProvider } from "./context/UserContext";
+import { WagmiProvider } from "wagmi";
+import type { Chain } from "wagmi/chains";
+import { AuthProvider } from "../context/AuthContext";
 
-// WalletConnect Project ID
-const projectId = process.env.NEXT_PUBLIC_PROJECT_ID as string;
+// Localhost Anvil Chain
+const anvilLocalhost: Chain = {
+  id: 31337,
+  name: "Anvil",
+  nativeCurrency: {
+    name: "ETH",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: { http: ["http://127.0.0.1:8545"] },
+    public: { http: ["http://127.0.0.1:8545"] },
+  },
+  blockExplorers: {
+    default: { name: "Etherscan (local)", url: "http://localhost:8545" },
+  },
+  testnet: true,
+};
 
-// Define chains for the application - explicitly converting to array with as const
-const chains = [sepolia, mainnet] as const;
+const projectId = "anvil-local-dev";
 
-// Configure wallets
 const { connectors } = getDefaultWallets({
-  appName: "CertifyChain",
+  appName: "certify",
   projectId,
 });
 
-// Create Wagmi config
-const config = createConfig({
-  chains,
-  transports: {
-    [sepolia.id]: http(),
-    [mainnet.id]: http(),
-  },
-  connectors,
+export const config = getDefaultConfig({
+  appName: "certify",
+  projectId,
+  chains: [anvilLocalhost],
+  ssr: true,
 });
 
 export function Providers({ children }: { children: ReactNode }) {
-  // Create a client for React Query
   const [queryClient] = useState(() => new QueryClient());
 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <UserProvider>
-            {children}
-            <Toaster position="bottom-right" />
-          </UserProvider>
+          <AuthProvider>{children}</AuthProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
