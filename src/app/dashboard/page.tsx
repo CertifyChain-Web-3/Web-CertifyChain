@@ -135,7 +135,7 @@ export default function CertificateDashboard() {
           </div>
           <div className="flex items-end">
             <Button
-              onClick={() => router.push("/dashboard/certificate/new")}
+              onClick={() => router.push("/upload")}
               className="bg-white text-purple-700 hover:bg-white/90 font-medium px-6"
             >
               <Plus className="h-4 w-4 mr-2" />
